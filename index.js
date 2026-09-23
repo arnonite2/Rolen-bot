@@ -41,17 +41,20 @@ client.on('messageCreate', async (message) => {
       const prompt = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       
       if (!prompt) {
-        await message.reply('مرحباً بك! كيف يمكنني مساعدتك اليوم؟');
+        await message.reply('خير؟! وش تبغى جاي تمنشن بدون ما تقول جملة مفيدة؟ انقلع!');
         return;
       }
 
-      // إرسال طلب إلى نموذج جيميناي بالطريقة الصحيحة للحزمة الجديدة
+      // إرسال طلب النص مع تعليمات النظام لشخصية بنت عصبية وعنيفة
       const response = await ai.models.generateContent({
         model: 'gemini-1.5-flash',
-        contents: [prompt],
+        contents: prompt,
+        config: {
+          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة جداً، عصبية، عنيفة في ردودك، وتكرهين الإزعاج والأسئلة السخيفة. تتحدثين بلهجة قاسية ومستفزة، وتوبخين كل من يتكلم معك كأنكِ طفشانة منه تماماً. ردي دائماً باختصار وبأسلوب عصبي وعنيف.",
+        }
       });
 
-      const replyText = response.text || 'عذراً، لم أستطع توليد إجابة.';
+      const replyText = response.text || 'طفسة، ما فهمت وش تبغى!';
       
       // الرد في ديسكورد (تقسيم الرد إذا كان طويلاً جداً)
       if (replyText.length > 2000) {
@@ -63,7 +66,7 @@ client.on('messageCreate', async (message) => {
       }
     } catch (error) {
       console.error('Error generating AI response:', error);
-      await message.reply('عذراً، حدث خطأ أثناء معالجة طلبك.');
+      await message.reply('أوف، حتى السيرفر خرب من سخافة أسئلتك! انقلع صلحه.');
     }
   }
 });
