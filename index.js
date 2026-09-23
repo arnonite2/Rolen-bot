@@ -55,7 +55,8 @@ client.on('messageCreate', async (message) => {
         }
       });
 
-      const replyText = response.text || 'طفسة، ما فهمت وش تبغى!';
+      // استخراج النص بطريقة مضمونة لضمان تنوع الإجابات وعدم تكرارها
+      const replyText = response.text || (response.candidates && response.candidates[0]?.content?.parts[0]?.text) || 'طفسة، ما فهمت وش تبغى!';
       
       // الرد في ديسكورد (تقسيم الرد إذا كان طويلاً جداً)
       if (replyText.length > 2000) {
