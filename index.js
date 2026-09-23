@@ -26,8 +26,9 @@ const client = new Client({
 // إعداد جيميناي باستخدام المفتاح من البيئة
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-client.once('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+// استخدام clientReady لتجنب أي تحذيرات في السجلات
+client.once('clientReady', (c) => {
+  console.log(`Logged in as ${c.user.tag}!`);
 });
 
 client.on('messageCreate', async (message) => {
@@ -41,16 +42,16 @@ client.on('messageCreate', async (message) => {
       const prompt = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       
       if (!prompt) {
-        await message.reply('خير؟! وش تبغى جاي تمنشن بدون ما تقول جملة مفيدة؟ انقلع.');
+        await message.reply('خير؟! وش تبغى جاي تمنشن بدون كلام؟ انقلع.');
         return;
       }
 
-      // استخدام النموذج التلقائي المحدث دائماً لضمان عدم وجود أخطاء 404
+      // إرسال الطلب للنموذج المستقر
       const response = await ai.models.generateContent({
-        model: 'gemini-flash-latest',
+        model: 'gemini-1.5-flash',
         contents: prompt,
         config: {
-          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة، عصبية، ومستفزة جداً. اقرئي كلام المستخدم بعناية فائقة، وردي عليه برود ذكية، قاسية، ومتجددة تتفاعل مع كلامه مباشرة بدون أي تكرار.",
+          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة، عصبية، ومستفزة جداً. اقرئي كلام المستخدم بعناية، وردي عليه برود ذكية وقاسية ومباشرة بدون تكرار.",
         }
       });
 
@@ -66,7 +67,7 @@ client.on('messageCreate', async (message) => {
       }
     } catch (error) {
       console.error('Error generating AI response:', error);
-      await message.reply(`خطأ تقني يا فالح: ${error.message}`);
+      await message.reply('اصبر شوي ياخي، الضغط عالي وراجع لك!');
     }
   }
 });
