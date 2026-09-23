@@ -38,4 +38,9 @@ client.on('messageCreate', (message) => {
 
 // 4. تسجيل الدخول
 client.login(process.env.DISCORD_TOKEN);
+    // أمر نسبة الحب أو الحظ
+    if (message.content === 'نسبة') {
+        const randomNum = Math.floor(Math.random() * 101); // يولد رقماً بين 0 و 100
+        message.reply(`${randomNum}% يا فاشل 🥀`);
+    }
 
