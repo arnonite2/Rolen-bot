@@ -2,7 +2,7 @@ const { Client, GatewayIntentBits } = require('discord.js');
 const { GoogleGenAI } = require('@google/genai');
 const express = require('express');
 
-// إعداد سيرفر الويب الوهمي ليبقى البوت شغالاً على Render
+// إعداد سيرفر الويب ليبقى البوت شغالاً على Render
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -45,10 +45,10 @@ client.on('messageCreate', async (message) => {
         return;
       }
 
-      // إرسال طلب إلى نموذج جيميناي
+      // إرسال طلب إلى نموذج جيميناي بالطريقة الصحيحة للحزمة الجديدة
       const response = await ai.models.generateContent({
         model: 'gemini-1.5-flash',
-        contents: prompt,
+        contents: [prompt],
       });
 
       const replyText = response.text || 'عذراً، لم أستطع توليد إجابة.';
