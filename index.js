@@ -1,225 +1,48 @@
 import discord
 from discord.ext import commands
-import json
-import os
-from groq import Groq as G
-import asyncio
 
-MODEL = "meta-llama/llama-4-scout-17b-16e-instruct"
-GUILD = None
-
-history = []
-
-# قراءة المفاتيح مباشرة من متغيرات البيئة في رندر (مثل طريقتنا السابقة)
-def get_token():
-    return os.getenv("DISCORD_TOKEN")
-    
-def get_key():
-    return os.getenv("GROQ_API_KEY")
-
-disor = G(api_key=get_key())
-    
+# إعدادات البوت الأساسية
 intents = discord.Intents.default()
 intents.message_content = True
-intents.members = True
 
-bot = commands.Bot("!", intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.event
 async def on_ready():
-    print(f"Logged as: {bot.user}")
+    print(f'البوت جاهز وشغال باسم: {bot.user}')
 
-def return_server_info(guild: discord.Guild):
-    if not guild:
-        return
-    
-    info = ""
-    info += f"Server: {guild.name} - {guild.id}\nCategories:\n"
-
-    for category in guild.categories:
-        info += f"- {category.name} ({category.id})\n"
-
-    info += "Channels:\n"
-    for channel in guild.channels:
-        info += f"- {channel.name} ({channel.id})\n"
-    
-    info += "Roles:\n"
-    for role in guild.roles:
-        info += f"- Pos: {role.position}, Name: {role.name} ({role.id})\n"
-
-    return info
-
-AiAbout = f"""
-You are a Discord bot named Disor 1.
-- Talk in Arabic only, NEVER use any other language
-- You help users manage their Discord server
-- talk friendly and talk with المصريه العاميه
-
-What you can do?
-you can Only do these skills:
-- Create Channels: Voices, Text and add them to categories
-- Delete Channels
-- Edit Channel Name
-- Create Roles
-- Give Roles
-- Create Categories
-- more soon...
-"""
-
-def disor_get_category(guild: discord.Guild, target: str):
-    server_categories = {}
-    for category in guild.categories:
-        server_categories[category.name] = {"id": str(category.id)}
-
-    default_categories = {
-        "System": {"id": "1234567899"},
-        "Generals": {"id": "1321462575"},
-        "Moderators": {"id": "432534654"},
-    }
-
-    disor_category = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": "You going to take a name of category and search for one in the list and return its id ONLY"},
-                        {"role": "user", "content": f"{target}\ncategories: {server_categories}"}
-                    ]
-    )
-    return guild.get_channel(int(disor_category.choices[0].message.content))
-
-def disor_get_channel(guild: discord.Guild, target: str):
-    server_channels = {}
-    for channel in guild.channels:
-        server_channels[channel.name] = {"id": str(channel.id)}
-
-    disor_channel = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": "You going to take a name of category and search for one in the list and return its id ONLY"},
-                        {"role": "user", "content": f"{target}\nnchannels: {server_channels}"}
-                    ]
-    )
-    return guild.get_channel(int(disor_channel.choices[0].message.content)) 
-
-def disor_get_role(guild: discord.Guild, target: str):
-    server_roles = {}
-    for role in guild.roles:
-        server_roles[role.name] = {"id": str(role.id), "color": str(role.color)}
-
-    disor_role = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": "You going to take a name of role and search for one in the list and return its id ONLY"},
-                        {"role": "user", "content": f"{target}\nroles: {server_roles}"}
-                    ]
-    )
-    return guild.get_role(int(disor_role.choices[0].message.content)) 
-
-def disor_get_member(guild: discord.Guild, target: str):
-    server_members = {}
-    for member in guild.members:
-        server_members[member.name] = {"id": str(member.id), "global_name": str(member.global_name)}
-
-    sorted_members = ""
-    for member in server_members:
-        sorted_members += f"{member}: {server_members[member]['global_name']} ({server_members[member]['id']})\n"
-
-    disor_role = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": "You going to take a name of member and search for one in the list and return its id ONLY\n- Return ID ONLY!"},
-                        {"role": "user", "content": f"{target}\nMembers:\n{sorted_members}"}
-                    ]
-    )
-    return guild.get_member(int(disor_role.choices[0].message.content))
-
-async def run_commands(commands: list, guild: discord.Guild):
-    for command in commands:
-        for key in command:
-            await asyncio.sleep(1)
-            if key.startswith("CreateChannel"):
-                if command[key]["Type"] == "text":
-                    channel = await guild.create_text_channel(name=command[key]["Name"])
-                    if command[key].get("Category") is not None:
-                        await channel.edit(category=disor_get_category(guild, command[key]["Category"]))
-                elif command[key]["Type"] == "voice":
-                    channel = await guild.create_voice_channel(name=command[key]["Name"])
-                    if command[key].get("Category") is not None:
-                        await channel.edit(category=disor_get_category(guild, command[key]["Category"]))
-            elif key.startswith("DeleteChannel"):
-                channel = disor_get_channel(guild, command[key]["Name"])
-                await channel.delete()
-            elif key.startswith("EditChannelName"):
-                channel = disor_get_channel(guild, command[key]["Channel"])
-                await channel.edit(name=command[key]["Name"])
-            elif key.startswith("CreateRole"):
-                role = await guild.create_role(name=command[key]["Name"], colour=discord.Colour.from_str(command[key]["Color"]))
-                perms = discord.Permissions(**command[key]["Perms"])
-                await role.edit(permissions=perms)
-                await guild.edit_role_positions(positions={role: command[key]["Position"] + 1})
-            elif key.startswith("GrantRole"):
-                member = disor_get_member(guild, command[key]["Member"])
-                role_to_grant = disor_get_role(guild, command[key]["Name"])
-                await member.add_roles(role_to_grant)
-            elif key.startswith("CreateCategory"):
-                await guild.create_category(name=command[key]["Name"])
-
+# حدث قراءة الرسائل
 @bot.event
-async def on_message(m: discord.Message):
-    if m.author.id == bot.user.id:
+async def on_message(message):
+    # تجاهل رسائل البوت نفسه عشان ما يدخل في حلقة ردود لا نهائية
+    if message.author == bot.user:
         return
 
-    if bot.user.mention in m.content:
-        final = m.content.replace(bot.user.mention, "").strip()
+    # قراءة محتوى الرسالة بحروف صغيرة
+    content = message.content.lower()
 
-        async with m.channel.typing():
-            response = disor.chat.completions.create(
-                model=MODEL,
-                messages=[
-                    {"role": "system", "content": f"Look at the user message and see if he wants to talk or want action, also if the user is asking questions return 'USER_IS_MESSAGING'\nAbout you: {AiAbout}\nDON'T chat with the user just take his message and return: 'USER_IS_MESSAGING' or 'USER_WANTS_ACTION' ONLY"},
-                    {"role": "user", "content": final},
-                ]
-            )
+    # 1. الكلمة الأولى
+    if "براه" in content:
+        await message.channel.send("https://cdn.discordapp.com/attachments/1525164893613850634/1525167132818669709/ac9a7b2edacc9f8f.gif?ex=6ab49dd4&is=6ab34c54&hm=3ee800abc6d483c5cc3ac2141c46f221a6fed8a535462e286fb98635d432934c&")
 
-            res_content = response.choices[0].message.content
-            if res_content.startswith("USER_IS_MESSAGING"):
-                chatbot = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": f"تحدث إلى المستخدم وساعده...\nAbout you: {AiAbout}\nServer Information:\n{return_server_info(m.guild)}"},
-                        {"role": "user", "content": final}
-                    ]
-                )
-                await m.reply(chatbot.choices[0].message.content)
+    # 2. الكلمة الثانية
+    elif "ههه" in content:
+        await message.channel.send("https://cdn.discordapp.com/attachments/1525168265846853765/1525173064621363401/96399f9b2ddd3f2d.gif?ex=6ab4a35a&is=6ab351da&hm=1aa54803e36b7b3367beabfb2f0fa3405e8de9d04858ae11348909d62d6190e4&")
 
-            elif res_content.startswith("USER_WANTS_ACTION"):
-                actioner = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": "You tell the user you will TRY to do the action, one sentence only in Egyptian Arabic."},
-                        {"role": "user", "content": final}
-                    ]
-                )
-                await m.reply(actioner.choices[0].message.content)
+    # 3. الكلمة الثالثة
+    elif "فاك" in content:
+        await message.channel.send("https://cdn.discordapp.com/attachments/1544411753981550673/1550330585887678484/Antonblast_-_Anton_Finisher_Jewel_Ghoul.gif?ex=6ab5319f&is=6ab3e01f&hm=d3b6cc4c781c934f447df1240ccc6f358c3383326c8998851cbca1d89c2b70aa&")
 
-                commands = []
-                parser = disor.chat.completions.create(
-                    model=MODEL,
-                    messages=[
-                        {"role": "system", "content": f"Take the user input and reply with JSON only. Server Information:\n{return_server_info(m.guild)}"},
-                        {"role": "user", "content": final}
-                    ]
-                )
+    # 4. الكلمة الرابعة
+    elif "صراخ" in content:
+        await message.channel.send("https://cdn.discordapp.com/attachments/1483720088514334760/1552338224486027348/Antonblast_-_Danton_Scream.gif?ex=6ab53f21&is=6ab3eda1&hm=a3e19660728b3523d3143eecdff440e0597814827de314dfda7e9accd546c782&")
 
-                try:
-                    raw = json.loads(parser.choices[0].message.content)
-                    for key, value in raw.items():
-                        if key.startswith("NoSkill"):
-                            await m.reply(raw[key]["Reply"])
-                        else:
-                            commands.append({key: value})
-                except Exception:
-                    pass
+    # 5. الكلمة الخامسة
+    elif "واو" in content:
+        await message.channel.send("https://cdn.discordapp.com/attachments/1525175038884446280/1525176340641349672/pizza-t.gif?ex=6ab4a668&is=6ab354e8&hm=682ab904ab190db5691b3f6fc78911b5ce50e6cf2530165694a83afd1423c6f1&")
 
-                await run_commands(commands, m.guild)
+    # ضروري جداً عشان تخلي الأوامر الثانية تشتغل
+    await bot.process_commands(message)
 
-bot.run(get_token())
+# حط التوكن حق بوتك هنا
+bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GyG1wc.-CcEqfpwTdBw8bb9kf8fssdj56oaI-mcGpGjnw")
