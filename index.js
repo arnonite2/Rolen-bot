@@ -26,9 +26,6 @@ const client = new Client({
 // إعداد جيميناي باستخدام المفتاح من البيئة
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-// خريطة لتخزين جلسات المحادثة لكل قناة
-const chatSessions = new Map();
-
 client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
@@ -48,23 +45,16 @@ client.on('messageCreate', async (message) => {
         return;
       }
 
-      const channelId = message.channelId;
-      let chat = chatSessions.get(channelId);
+      // استخدام النموذج التلقائي المحدث دائماً لضمان عدم وجود أخطاء 404
+      const response = await ai.models.generateContent({
+        model: 'gemini-flash-latest',
+        contents: prompt,
+        config: {
+          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة، عصبية، ومستفزة جداً. اقرئي كلام المستخدم بعناية فائقة، وردي عليه برود ذكية، قاسية، ومتجددة تتفاعل مع كلامه مباشرة بدون أي تكرار.",
+        }
+      });
 
-      // إذا لم تكن هناك جلسة مفتوحة، نبدأ جلسة جديدة بالنموذج الصحيح والشخصية العصبية
-      if (!chat) {
-        chat = ai.chats.create({
-          model: 'gemini-3.6-flash',
-          config: {
-            systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة، عصبية، ومستفزة جداً. تتحدثين بذكاء وواقعية تامة. اقرئي كلام المستخدم بعناية وردي عليه برد حقيقي، قاسي، ومباشر يتفاعل مع كل كلمة يقولها بدون أي تكرار أو جمل محفوظة.",
-          }
-        });
-        chatSessions.set(channelId, chat);
-      }
-
-      // إرسال الرسالة إلى جلسة المحادثة الحية
-      const response = await chat.sendMessage({ message: prompt });
-      const replyText = response.text || 'طفسة، ماني فاضية لك!';
+      const replyText = response.text || 'طفسة، ما فهمت وش تبغى!';
       
       // الرد في ديسكورد (تقسيم الرد إذا كان طويلاً جداً)
       if (replyText.length > 2000) {
@@ -76,7 +66,6 @@ client.on('messageCreate', async (message) => {
       }
     } catch (error) {
       console.error('Error generating AI response:', error);
-      chatSessions.delete(message.channelId);
       await message.reply(`خطأ تقني يا فالح: ${error.message}`);
     }
   }
