@@ -45,4 +45,4 @@ async def on_message(message):
     await bot.process_commands(message)
 
 # حط التوكن حق بوتك هنا
-bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GyG1wc.-CcEqfpwTdBw8bb9kf8fssdj56oaI-mcGpGjnw")
+bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GSI4DE.Uv0LCaINlss9zR9Bv5cQLx8xULOMmUmSAL6ZYg")
