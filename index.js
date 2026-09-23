@@ -3,30 +3,39 @@ const express = require('express');
 
 // 1. سيرفر صغير لإبقاء البوت مستيقظاً
 const app = express();
-app.get('/', (req, res) => res.send('البوت شغال 24/7!'));
-app.listen(3000, () => console.log('Web server ready.'));
+app.get('/', (req, res) => res.send('24/7 Bot is active!'));
+app.listen(3000, () => console.log('Web server is ready on port 3000'));
 
 // 2. إعدادات ديسكورد
 const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent
-  ]
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
 });
 
 client.on('ready', () => {
-  console.log(`تم تسجيل الدخول باسم ${client.user.tag}`);
+    console.log(`تم تسجيل الدخول باسم ${client.user.tag}`);
 });
 
-// 3. أمر (هلا -> بطيخ)
+// 3. قسم الردود التلقائية
 client.on('messageCreate', (message) => {
-  if (message.author.bot) return;
+    if (message.author.bot) return;
 
-  if (message.content === 'هلا') {
-    message.reply('بطيخ');
-  }
+    if (message.content === 'هلا') {
+        message.reply('بطيخ');
+    }
+
+    if (message.content === 'السلام عليكم') {
+        message.reply('وعليكم السلام ورحمة الله وبركاته! ظلمت السيرفر.');
+    }
+
+    if (message.content === 'كيفك') {
+        message.reply('زي الزفت !');
+    }
 });
 
 // 4. تسجيل الدخول
 client.login(process.env.DISCORD_TOKEN);
+
