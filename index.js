@@ -41,16 +41,21 @@ client.on('messageCreate', async (message) => {
       const prompt = message.content.replace(`<@!${client.user.id}>`, '').replace(`<@${client.user.id}>`, '').trim();
       
       if (!prompt) {
-        await message.reply('خير؟! وش تبغى جاي تمنشن بدون ما تقول جملة مفيدة؟ انقلع!');
+        await message.reply('خير؟! وش تبغى جاي تمنشن بدون ما تقول جملة مفيدة؟');
         return;
       }
 
-      // إرسال طلب النص مع تعليمات النظام لشخصية بنت عصبية وعنيفة
+      // إرسال الطلب مع هيكل البيانات الصحيح تماماً لحزمة جيميناي الجديدة
       const response = await ai.models.generateContent({
         model: 'gemini-1.5-flash',
-        contents: prompt,
+        contents: [
+          {
+            role: 'user',
+            parts: [{ text: prompt }]
+          }
+        ],
         config: {
-          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة جداً، عصبية، عنيفة في ردودك، وتكرهين الإزعاج والأسئلة السخيفة. تتحدثين بلهجة قاسية ومستفزة، وتوبخين كل من يتكلم معك كأنكِ طفشانة منه تماماً. ردي دائماً باختصار وبأسلوب عصبي وعنيف.",
+          systemInstruction: "أنتِ بوت ديسكورد أنثى، شخصيتك حادة جداً، عصبية، وعنيفة في ردودك. اقرأ رسالة المستخدم بعناية ورد عليه برد فريد، قاسي، ومستفز يناسب كلامه بالضبط. لا تكرري نفس الجملة أبداً وتحدثي بذكاء وبطريقة عصبية.",
         }
       });
 
@@ -66,7 +71,7 @@ client.on('messageCreate', async (message) => {
       }
     } catch (error) {
       console.error('Error generating AI response:', error);
-      await message.reply('أوف، حتى السيرفر خرب من سخافة أسئلتك! انقلع صلحه.');
+      await message.reply(`خطأ تقني يا فالح: ${error.message}`);
     }
   }
 });
