@@ -45,4 +45,4 @@ async def on_message(message):
     await bot.process_commands(message)
 
 # تشغيل البوت بالتوكن الجديد
-bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GWlN7z.mxQhgC1sHm3BQSYirNu-b9J4zp-mbBOlqPcXPk") 
+bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GWlN7z.mxQhgC1sHm3BQSYirNu-b9J4zp-mbBOlqPcXPk")
