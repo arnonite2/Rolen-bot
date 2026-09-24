@@ -44,5 +44,5 @@ async def on_message(message):
     # ضروري جداً عشان تخلي الأوامر الثانية تشتغل
     await bot.process_commands(message)
 
-# حط التوكن حق بوتك هنا
-bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GSI4DE.Uv0LCaINlss9zR9Bv5cQLx8xULOMmUmSAL6ZYg")
+# تشغيل البوت بالتوكن الجديد
+bot.run("MTU1MjIyNDEyMzE2MDM2NzI0NQ.GWlN7z.mxQhgC1sHm3BQSYirNu-b9J4zp-mbBOlqPcXPk")
