@@ -33,3 +33,16 @@ async def on_message(message):
 
 # سحب التوكن من إعدادات رندر بأمان
 bot.run(os.getenv("DISCORD_TOKEN"))
+
+  # الرد على .
+  if message.content == ".":
+    await message.channel.send("هيهيع")
+
+  # الرد على مياو
+  elif message.content == "مياو":
+    await message.channel.send("سيرفر بشر مو حيوانات")
+
+  # الرد على اه
+  elif message.content == "اه":
+    await message.channel.send("اويليي")
+
