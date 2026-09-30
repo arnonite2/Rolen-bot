@@ -23,7 +23,7 @@ async def my_message_listener(message):
     # استخدام شروط دقيقة لمنع تطابق الكلمات ببعضها
     if "براه" == content or " براه " in content or content.startswith("براه ") or content.endswith(" براه"):
         await message.channel.send("https://cdn.discordapp.com/attachments/1525164893613850634/1525167132818669709/ac9a7b2edacc9f8f.gif?ex=6ab49dd4&is=6ab34c54&hm=3ee800abc6d483c5cc3ac2141c46f221a6fed8a535462e286fb98635d432934c&")
-    elif "ههه" in content:
+    elif "ههههه" in content:
         await message.channel.send("https://cdn.discordapp.com/attachments/1525168265846853765/1525173064621363401/96399f9b2ddd3f2d.gif?ex=6ab4a35a&is=6ab351da&hm=1aa54803e36b7b3367beabfb2f0fa3405e8de9d04858ae11348909d62d6190e4&")
     elif "فاك" in content:
         await message.channel.send("https://cdn.discordapp.com/attachments/1544411753981550673/1550330585887678484/Antonblast_-_Anton_Finisher_Jewel_Ghoul.gif?ex=6ab5319f&is=6ab3e01f&hm=d3b6cc4c781c934f447df1240ccc6f358c3383326c8998851cbca1d89c2b70aa&")
@@ -37,8 +37,8 @@ async def my_message_listener(message):
         await message.channel.send("https://cdn.discordapp.com/attachments/1101143800337944676/1549897274283270216/Messenger_creation_27458298591227511.jpg?ex=6ab59851&is=6ab446d1&hm=8b9ed7677f053cd74deeed00c315c912bd68725a7ab04f2194c553ada08f24a6&")
     elif "ععع" in content:
         await message.channel.send("https://cdn.discordapp.com/attachments/1541803699142398022/1541805587677847552/Spr_tvHUD_player_PZ_angry.gif?ex=6ab5d219&is=6ab48099&hm=7c1cc911484dc22855cf1daa0e1eadf0364cab8fdf347a01dbe43363f8656c58&")
-    elif "زعلن" in content:
-        await message.channel.send("https://discord.com/channels/1430972158678536286/1514623809205047477/1552603949461409865")
+    elif ":peddito:" in content:
+        await message.channel.send("https:https://cdn.discordapp.com/attachments/1484827428483235860/1554799703869104148/3532c2584a9918132dae3d60f8979329.jpg?backend=b2&ex=6abe3390&is=6abce210&hm=199c98e468b411f2949c3818df1124a504e33cf79fa387e1740cb49188dc0cd5&")
     elif "هيهيهي" in content:
         await message.channel.send("https://cdn.discordapp.com/attachments/1541803699142398022/1541805761204584538/PizzelleWalkDanceED.gif?ex=6ab5d242&is=6ab480c2&hm=51c23598337c70572da1516dfe90297cfb7574740a78d28ceccbfd6096ebac92&")
 
