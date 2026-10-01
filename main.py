@@ -40,7 +40,7 @@ async def my_message_listener(message):
         await message.channel.send("https://cdn.discordapp.com/attachments/1541803699142398022/1541805587677847552/Spr_tvHUD_player_PZ_angry.gif?ex=6ab5d219&is=6ab48099&hm=7c1cc911484dc22855cf1daa0e1eadf0364cab8fdf347a01dbe43363f8656c58&")
     elif ":peddito:" in content:
         # تم تصحيح رابط الصورة (حذف التكرار في https:)
-        await message.channel.send("https://cdn.discordapp.com/attachments/1484827428483235860/1554799703869104148/3532c2584a9918132dae3d60f8979329.jpg?backend=b2&ex=6abe3390&is=6abce210&hm=199c98e468b411f2949c3818df1124a504e33cf79fa387e1740cb49188dc0cd5&")
+        await message.channel.send("https://cdn.discordapp.com/attachments/1483721809747775548/1555092327117365259/3532c2584a9918132dae3d60f8979329.jpg?backend=b2&ex=6abf4417&is=6abdf297&hm=a5d8df727b68c9907b53af99af4a24a4a331675d0ead7969cffded1abacc0649&")
     elif "هيهيهي" in content:
         await message.channel.send("https://cdn.discordapp.com/attachments/1541803699142398022/1541805761204584538/PizzelleWalkDanceED.gif?ex=6ab5d242&is=6ab480c2&hm=51c23598337c70572da1516dfe90297cfb7574740a78d28ceccbfd6096ebac92&")
 
